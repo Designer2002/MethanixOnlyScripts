@@ -8,7 +8,7 @@ namespace LOCATIONS
     public class LocationGoal
     {
         public int AvailibleMoves;
-        public int PlayerMoves { get; private set; }
+        public int PlayerMoves { get; set; }
         public bool isAgile;
         public bool IsFinished => !isFailed && targetLocation == currentLocation;
         public bool isFailed => PlayerMoves > AvailibleMoves;

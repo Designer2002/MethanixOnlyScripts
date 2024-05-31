@@ -17,10 +17,13 @@ public class VN_ConfigurationsData
     public float autoReadTextSpeed = 1f;
 
     //audio
-    public float musicVolume = 1f;
-    public float audioVolume = 1f;
-    public float voiceVolume = 1f;
+    public float musicVolume = 0.5f;
+    public float audioVolume = 0.5f;
+    public float voiceVolume = 0.5f;
     public bool music_mute = false;
+    public bool sfx_mute = false;
+    public bool voice_mute = false;
+
 
     public void Load()
     {
@@ -44,6 +47,12 @@ public class VN_ConfigurationsData
         Ui.autoReaderSpeed.value = autoReadTextSpeed;
         Ui.SetButtonColors(Ui.continueSkipping, Ui.stopSkipping, continueSkippingAfterChoice);
         Ui.archictectSpeed.value = dialogueTestSpeed;
+        Ui.musicVolume.value = musicVolume;
+        Ui.soundVolume.value = audioVolume;
+        Ui.voiceVolume.value = voiceVolume;
+        Ui.musicMute.sprite = music_mute ? Ui.muted : Ui.umnuted;
+        Ui.voiceMute.sprite = voice_mute ? Ui.muted : Ui.umnuted;
+        Ui.sfxMute.sprite = sfx_mute ? Ui.muted : Ui.umnuted;
     }
 
     public void Save()

@@ -13,6 +13,7 @@ namespace VISUALNOVEL
         public const string SCREENSHOT_FILE_TYPE = ".jpg";
         private const float DOWNSCALE = 1;
         private const bool encryptFiles = true;
+        public bool newGame = true;
         public VN_VaribleData[] variables;
 
         public SavingsData activeState;
@@ -29,6 +30,7 @@ namespace VISUALNOVEL
 
         public void Save()
         {
+            newGame = false;
             activeState = SavingsData.Capture();
             activeConversations = GetConversationData();
             variables = GetVariableData();

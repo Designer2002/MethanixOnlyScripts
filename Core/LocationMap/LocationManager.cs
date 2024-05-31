@@ -12,6 +12,7 @@ namespace LOCATIONS
         public LocationConfigurationSO config;
         public LocationGoal goal;
         private GRAPHICS.GraphicLayer gl;
+        public int convProgress;
         public ConversationStatus Status { get; set; }
         
         public enum ConversationStatus { Top, Process, End }
@@ -192,16 +193,26 @@ namespace LOCATIONS
             };
             DIALOGUE.DialogueSystem.instance.DialogueContainer.hide();
             DIALOGUE.DialogueSystem.instance.DisableGlobalReading();
+            convProgress = DIALOGUE.DialogueSystem.instance.conversationManager.convProgress;
         }
 
         public void KillGoal()
         {
-            goal = null;
+            //Debug.Log(LL_Goal.MainConversation);
             LL_Goal.MainConversation.SetProgress(LL_Goal.After);
             DIALOGUE.DialogueSystem.instance.conversationManager.StartConverstaion(LL_Goal.MainConversation);
+            goal = null;
 
 
 
+        }
+
+        public void GoalInProgress()
+        {
+            //LL_Goal.MainConversation = DIALOGUE.DialogueSystem.instance.conversationManager.conversation;
+            LocationExpander.instance.Hide();
+            DIALOGUE.DialogueSystem.instance.DialogueContainer.show();
+            DIALOGUE.DialogueSystem.instance.EnableGlobalReading();
         }
 
       

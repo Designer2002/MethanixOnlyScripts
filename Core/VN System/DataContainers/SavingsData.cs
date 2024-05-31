@@ -10,6 +10,9 @@ namespace VISUALNOVEL
         public List<CharacterData> characters;
         public List<AudioData> audio;
         public List<GraphicData> graphics;
+        public List<SearchingObjectsData> searchingObjects;
+        public StatsData stats;
+        public GoalData goal;
 
         public static SavingsData Capture()
         {
@@ -17,6 +20,9 @@ namespace VISUALNOVEL
             data.audio = AudioData.Capture();
             data.characters = CharacterData.Capture();
             data.graphics = GraphicData.Capture();
+            data.goal = GoalData.Capture();
+            data.searchingObjects = SearchingObjectsData.Capture();
+            data.stats = StatsData.Capture();
             return data;
         }
 
@@ -25,6 +31,9 @@ namespace VISUALNOVEL
             CharacterData.Apply(characters);
             AudioData.Apply(audio);
             GraphicData.Apply(graphics);
+            StatsData.Apply(stats);
+            SearchingObjectsData.Apply(searchingObjects);
+            GoalData.Apply(goal);
         }
     }
 }

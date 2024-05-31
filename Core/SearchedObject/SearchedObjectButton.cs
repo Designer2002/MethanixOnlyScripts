@@ -10,7 +10,7 @@ public class SearchedObjectButton : MonoBehaviour
     private CanvasGroup CanvasGroup;
     [SerializeField]
     private UnityEngine.UI.Button Button;
-    public bool IsFound { get; private set; }
+    public bool IsFound { get; set; }
 
     private DIALOGUE.CanvasGroupController cg = null;
 

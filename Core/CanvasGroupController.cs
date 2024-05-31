@@ -46,10 +46,10 @@ namespace DIALOGUE
             if (is_showing) return co_showing;
             else if (is_hiding)
             {
-                DialogueSystem.instance.StopCoroutine(co_hiding);
+                owner.StopCoroutine(co_hiding);
                 co_hiding = null;
             }
-            co_showing = DialogueSystem.instance.StartCoroutine(Fading(1));
+            co_showing = owner.StartCoroutine(Fading(1));
             return co_showing;
         }
         public Coroutine Hide()
@@ -57,10 +57,10 @@ namespace DIALOGUE
             if (is_hiding) return co_hiding;
             else if (is_showing)
             {
-                DialogueSystem.instance.StopCoroutine(co_showing);
+                owner.StopCoroutine(co_showing);
                 co_showing = null;
             }
-            co_hiding = DialogueSystem.instance.StartCoroutine(Fading(0));
+            co_hiding = owner.StartCoroutine(Fading(0));
             return co_hiding;
         }
 

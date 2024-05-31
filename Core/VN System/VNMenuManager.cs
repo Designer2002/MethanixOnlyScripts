@@ -79,7 +79,7 @@ namespace VISUALNOVEL
         public void OpenRoot()
         {
             rootCG.Show();
-            DIALOGUE.DialogueSystem.instance.DialogueContainer.hide();
+            if(DIALOGUE.DialogueSystem.instance != null) DIALOGUE.DialogueSystem.instance.DialogueContainer.hide();
             rootCG.SetInteractableState(true);
             isOpen = true;
         }
@@ -87,9 +87,20 @@ namespace VISUALNOVEL
         public void CloseRoot()
         {
             rootCG.Hide();
-            DIALOGUE.DialogueSystem.instance.DialogueContainer.show();
+            if (DIALOGUE.DialogueSystem.instance != null) DIALOGUE.DialogueSystem.instance.DialogueContainer.show();
             rootCG.SetInteractableState(false);
             isOpen = false;
+        }
+
+        public void ClickHome()
+        {
+            VN_ConfigurationsData.activeConfig.Save();
+            UnityEngine.SceneManagement.SceneManager.LoadScene(MainMenu.MAIN_MENU_SCENE_NAME);
+        }
+        
+        public void ClickQuit()
+        {
+            Application.Quit();
         }
     }
 }

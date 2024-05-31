@@ -17,7 +17,7 @@ namespace DIALOGUE
         private Button autoButton;
         [SerializeField]
         private Button skipButton;
-        private ConversationManager ConversationManager;
+        public ConversationManager ConversationManager { get; private set; }
         private TextArchitect Architect => ConversationManager.architect;
         public bool skip { get; set; } = true;
         public float speed { get; set; } = 1;
@@ -27,7 +27,7 @@ namespace DIALOGUE
 
         public void Initialize(ConversationManager manager)
         {
-            this.ConversationManager = manager;
+            ConversationManager = manager;
         }
 
         private void Enable()

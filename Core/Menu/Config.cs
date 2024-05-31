@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 using VISUALNOVEL;
 
@@ -15,6 +16,7 @@ public class Config : Page
     [SerializeField]
     public UIItems UI;
     private GameObject activePanel;
+    
     private VN_ConfigurationsData config => VN_ConfigurationsData.activeConfig;
     // Start is called before the first frame update
     void Start()
@@ -34,6 +36,7 @@ public class Config : Page
     private void OnApplicationQuit()
     {
         VN_ConfigurationsData.activeConfig.Save();
+        VN_ConfigurationsData.activeConfig = null;
     }
     public void LoadConfig()
     {
@@ -97,15 +100,64 @@ public class Config : Page
     public void SetTextArchictectSpeed()
     {
         config.dialogueTestSpeed = UI.archictectSpeed.value;
-        DIALOGUE.DialogueSystem.instance.architect.speed = config.dialogueTestSpeed;
+        if (DIALOGUE.DialogueSystem.instance != null) DIALOGUE.DialogueSystem.instance.architect.speed = config.dialogueTestSpeed;
+    }
+
+    public void SetMusicVolume()
+    {
+        config.musicVolume = UI.musicVolume.value;
+        AUDIO.AudioManager.instance.SetMusicVolume(config.musicVolume, config.music_mute);
+        UI.musicFill.color = config.music_mute ? UI.MusicOffColor : UI.MusicOnColor;
+    }
+    public void SetSoundVolume()
+    {
+        config.audioVolume = UI.soundVolume.value;
+        AUDIO.AudioManager.instance.SetSFXVolume(config.audioVolume, config.sfx_mute);
+        UI.SFXfill.color = config.sfx_mute ? UI.MusicOffColor : UI.MusicOnColor;
+    }
+    public void SetVoiceVolume()
+    {
+        config.voiceVolume = UI.voiceVolume.value;
+        AUDIO.AudioManager.instance.SetVoiceVolume(config.voiceVolume, config.voice_mute);
+        UI.voiceFill.color = config.voice_mute ? UI.MusicOffColor : UI.MusicOnColor;
+    }
+
+    public void SetMusicMute()
+    {
+        config.music_mute = !config.music_mute;
+        UI.musicFill.color = config.music_mute ? UI.MusicOffColor : UI.MusicOnColor;
+        UI.musicMute.sprite = config.music_mute ? UI.muted : UI.umnuted;
+
+        AUDIO.AudioManager.instance.SetMusicVolume(config.musicVolume, config.music_mute);
+
+    }
+    public void SetSFXMute()
+    {
+        config.sfx_mute = !config.sfx_mute;
+        UI.SFXfill.color = config.sfx_mute ? UI.MusicOffColor : UI.MusicOnColor;
+        UI.sfxMute.sprite = config.sfx_mute ? UI.muted : UI.umnuted;
+
+        AUDIO.AudioManager.instance.SetSFXVolume(config.audioVolume, config.sfx_mute);
+    }
+    public void SetVoiceMute()
+    {
+        config.voice_mute = !config.voice_mute;
+        UI.voiceFill.color = config.voice_mute ? UI.MusicOffColor : UI.MusicOnColor;
+        UI.voiceMute.sprite = config.voice_mute ? UI.muted : UI.umnuted;
+
+        AUDIO.AudioManager.instance.SetVoiceVolume(config.voiceVolume, config.voice_mute);
     }
     public void SetAutoReaderSpeed()
     {
         config.autoReadTextSpeed = UI.autoReaderSpeed.value;
-        DIALOGUE.AutoReader reader = DIALOGUE.DialogueSystem.instance.reader;
-        if(reader != null)
+        if (DIALOGUE.DialogueSystem.instance != null)
         {
-            reader.speed = config.autoReadTextSpeed;
+            DIALOGUE.AutoReader reader = DIALOGUE.DialogueSystem.instance.reader;
+
+            if (reader != null)
+            {
+                reader.speed = config.autoReadTextSpeed;
+            }
         }
     }
 }
@@ -127,6 +179,16 @@ public class Config : Page
 
     [Header("Audio")]
     public Slider musicVolume, soundVolume, voiceVolume;
+    public Image musicFill, SFXfill, voiceFill;
+
+    public Color32 MusicOnColor = new Color32(45, 70, 255, 255);
+    public Color32 MusicOffColor = new Color32(140, 140, 140, 255);
+    public Sprite umnuted;
+    public Sprite muted;
+
+    public Image musicMute;
+    public Image voiceMute;
+    public Image sfxMute;
 
     public void SetButtonColors(Button a, Button b, bool selectedA)
     {

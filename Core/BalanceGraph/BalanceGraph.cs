@@ -29,6 +29,12 @@ namespace BALANCE
 
         public static BalanceGraph instance;
 
+        public float HopeStat => stats.GetStat(Stats.StatType.Hope);
+        public float LogicStat => stats.GetStat(Stats.StatType.Logic);
+        public float EmotionStat => stats.GetStat(Stats.StatType.Emotions);
+        public float LoyalityStat => stats.GetStat(Stats.StatType.Loyality);
+        public float PurposeStat => stats.GetStat(Stats.StatType.Purpose);
+
         private List<float> target;
         private Dictionary<Stats.StatType, float> current;
 

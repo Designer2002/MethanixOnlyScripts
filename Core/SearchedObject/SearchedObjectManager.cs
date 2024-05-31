@@ -9,7 +9,7 @@ public class SearchedObjectManager : MonoBehaviour
     private GameObject ButtonPrefab;
     [SerializeField]
     private Canvas Main;
-    private Dictionary<string, SearchedObjectButton> buttons = new Dictionary<string, SearchedObjectButton>();
+    public Dictionary<string, SearchedObjectButton> buttons = new Dictionary<string, SearchedObjectButton>();
     private int MIN_X;
     private int MAX_X;
     public bool IsAnythingToSearch => buttons.Count != 0;

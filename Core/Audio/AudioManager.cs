@@ -14,6 +14,14 @@ namespace AUDIO
         public AudioMixerGroup musicMixer;
         public AudioMixerGroup sfxMixer;
         public AudioMixerGroup voiceMixer;
+        [SerializeField]
+        public AnimationCurve audioFalloffCurve;
+
+        public const string MUSIC_VOLUME_PARAMETER_NAME = "Music";
+        public const string SFX_VOLUME_PARAMETER_NAME = "SFX";
+        public const string VOICE_VOLUME_PARAMETER_NAME = "Voice";
+
+        public const float MUTE_VOLUME_PARAMETER_NAME = -80.0f;
 
         public static Dictionary<int, AudioChannel> channels = new Dictionary<int, AudioChannel>();
 
@@ -134,6 +142,24 @@ namespace AUDIO
                 return channel;
             }
             return null;
+        }
+
+        public void SetMusicVolume(float volume, bool muted)
+        {
+            volume = muted ? MUTE_VOLUME_PARAMETER_NAME : audioFalloffCurve.Evaluate(volume);
+            musicMixer.audioMixer.SetFloat(AUDIO.AudioManager.MUSIC_VOLUME_PARAMETER_NAME, volume);
+        }
+
+        public void SetSFXVolume(float volume, bool muted)
+        {
+            volume = muted ? MUTE_VOLUME_PARAMETER_NAME : audioFalloffCurve.Evaluate(volume);
+            sfxMixer.audioMixer.SetFloat(AUDIO.AudioManager.SFX_VOLUME_PARAMETER_NAME, volume);
+        }
+
+        public void SetVoiceVolume(float volume, bool muted)
+        {
+            volume = muted ? MUTE_VOLUME_PARAMETER_NAME : audioFalloffCurve.Evaluate(volume);
+            voiceMixer.audioMixer.SetFloat(AUDIO.AudioManager.VOICE_VOLUME_PARAMETER_NAME, volume);
         }
     }
 }

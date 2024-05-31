@@ -17,7 +17,7 @@ public class LL_Goal : ILogicalLine
     private static bool agile;
     private static int moves;
     private static Dictionary<string, Conversation> ConditionGoalChecks = new Dictionary<string, Conversation>();
-    public static int Ending { get; private set; }
+    public static int Ending { get; set; }
     public static int Starting { get; set; }
 
     public static int After { get; set; }
@@ -39,7 +39,7 @@ public class LL_Goal : ILogicalLine
         int progress = DialogueSystem.instance.conversationManager.convProgress;
         MainConversation = DialogueSystem.instance.conversationManager.conversation;
         EncapsulatedData GoalData = RipEncapsulationData(MainConversation, progress, false, MainConversation.fileStartIndex);
-        MainConversation.SetProgress(GoalData.endingIndex);
+        MainConversation.SetProgress(GoalData.startingIndex);
         Ending = GoalData.endingIndex;
         Starting = GoalData.startingIndex;
         After = GoalData.endingIndex + 1;

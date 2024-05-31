@@ -69,8 +69,16 @@ namespace VISUALNOVEL
 
         public void Load()
         {
-            VNGameSave saveFile = VNGameSave.Load(filePath, true);
+            VNGameSave saveFile = VNGameSave.Load(filePath, false);
             SaveAndLoad.instance.Close(closeAllMenus: true);
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == MainMenu.MAIN_MENU_SCENE_NAME)
+            {
+                MainMenu.instance.LoadGame(saveFile);
+            }
+            else
+            {
+                saveFile.Activate();  
+            }
         }
 
         public void Save()

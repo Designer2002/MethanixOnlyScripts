@@ -28,7 +28,7 @@ namespace DIALOGUE
         public ConversationManager conversationManager { get; private set; }
         public bool isRunningConversation => conversationManager.isRunning;
         public TextArchitect architect { get; private set; }
-        public AutoReader reader { get; }
+        public AutoReader reader { get; private set; }
         public static DialogueSystem instance { get; private set; }
         public DialogueContinuationPrompt DialogueContinuationPrompt;
         private CanvasGroupController controller;
@@ -94,7 +94,7 @@ namespace DIALOGUE
             conversationManager = new ConversationManager(architect);
             DialogueContainer.Initialize();
             controller = new CanvasGroupController(this, MainCanvas);
-            AutoReader reader = GetComponent<AutoReader>();
+            reader = GetComponent<AutoReader>();
             if (reader != null) reader.Initialize(conversationManager);
             _initialized = true;
         }
