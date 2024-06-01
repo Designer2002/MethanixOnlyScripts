@@ -284,16 +284,16 @@ namespace DIALOGUE.Logical_Lines
             if(!selectedData.isNull && selectedData.lines.Count > 0)
             {
                 
-                Conversation newConversation = new Conversation(selectedData.lines);
-                if (!CheckIfNested(newConversation) && LOCATIONS.LocationManager.instance.goal == null)
-                {
-                    List<string> dataTrimBracket = new List<string>();
-                    foreach (var d in selectedData.lines)
-                        if (!d.Contains("}")) dataTrimBracket.Add(d);
-                    selectedData.lines = dataTrimBracket;
-                    newConversation = new Conversation(dataTrimBracket, file: currentConversation.file, fileStartIndex: selectedData.startingIndex, fileEndIndex: selectedData.endingIndex);
+                Conversation newConversation = new Conversation(selectedData.lines, file: currentConversation.file, fileStartIndex: selectedData.startingIndex, fileEndIndex: selectedData.endingIndex);
+                //if (!CheckIfNested(newConversation) && LOCATIONS.LocationManager.instance.goal == null)
+                //{
+                //    //List<string> dataTrimBracket = new List<string>();
+                //    //foreach (var d in selectedData.lines)
+                //    //    if (!d.Contains("}")) dataTrimBracket.Add(d);
+                //    //selectedData.lines = dataTrimBracket;
+                //    newConversation = new Conversation(selectedData.lines, file: currentConversation.file, fileStartIndex: selectedData.startingIndex, fileEndIndex: selectedData.endingIndex);
 
-                }
+                //}
                 if (!CheckIfNested(newConversation) && LOCATIONS.LocationManager.instance.goal == null)
                 {
                     DialogueSystem.instance.conversationManager.conversation.SetProgress(selectedData.endingIndex + 1);

@@ -49,14 +49,14 @@ public class LL_Goal : ILogicalLine
             Conversation newConversation = new Conversation(GoalData.lines);
             List<Conversation> newConversations = RipBigEncapsulatedConversation(newConversation);
             List<string> RawConditions = new List<string>();
-            foreach(var c in newConversations)
+            foreach (var c in newConversations)
             {
                 RawConditions.Add(ExtractConditionLine(c));
             }
             RawConditions.RemoveAll(l => l.Length == 0);
             int[] insideProgress = new int[newConversations.Count];
             int idx = 0;
-            foreach(var c in newConversations)
+            foreach (var c in newConversations)
             {
                 while (!c.HasReachedEnd())
                 {
@@ -65,11 +65,11 @@ public class LL_Goal : ILogicalLine
                     Conversation check = new Conversation(miniCondition.lines);
                     if (miniCondition.lines.Count != 0)
                     {
-                        if(!ConditionGoalChecks.ContainsKey(RawConditions[idx]))
+                        if (!ConditionGoalChecks.ContainsKey(RawConditions[idx]))
                             ConditionGoalChecks.Add(RawConditions[idx], check);
                     }
-                    
-                   
+
+
                     c.IncrementProgress();
 
                 }
@@ -88,7 +88,7 @@ public class LL_Goal : ILogicalLine
         int idx = 0;
         foreach (var line in conversation.GetLines())
         {
-            
+
             lines_tmp = new List<string>();
             if (line.Contains(start))
             {
@@ -99,7 +99,7 @@ public class LL_Goal : ILogicalLine
                     lines_tmp.Add(conversation.GetLines()[idx]);
                     idx++;
                 }
-                if(idx == conversation.Count() - 1) lines_tmp.Add(conversation.GetLines()[idx]);
+                if (idx == conversation.Count() - 1) lines_tmp.Add(conversation.GetLines()[idx]);
                 Conversation conv = new Conversation(lines_tmp);
 
                 conversations.Add(conv);
@@ -143,7 +143,7 @@ public class LL_Goal : ILogicalLine
                             OnlyIFData.lines = new List<string>();
                             if (IFdata.endingIndex + 1 < pair.Value.Count())
                             {
-                                if(pair.Value.FindProgress("else") != -1)
+                                if (pair.Value.FindProgress("else") != -1)
                                 {
                                     ELSEdata = RipEncapsulationData(pair.Value, IFdata.endingIndex, false);
                                     ELSEdata.startingIndex = 0;
@@ -154,16 +154,16 @@ public class LL_Goal : ILogicalLine
                                     }
                                     OnlyIFData.startingIndex = 0;
                                     OnlyIFData.endingIndex = OnlyIFData.lines.Count;
-                                    
+
                                 }
                             }
 
                             EncapsulatedData selectedData = conditionResult ? OnlyIFData : ELSEdata;
-                            
+
                             if (!selectedData.isNull && selectedData.lines.Count > 0)
                             {
                                 DialogueSystem.instance.conversationManager.conversation.SetProgress(selectedData.endingIndex);
-                                Conversation newConversation = new Conversation(selectedData.lines);
+                                Conversation newConversation = new Conversation(selectedData.lines, fileStartIndex:selectedData.startingIndex, fileEndIndex:selectedData.endingIndex);
                                 DialogueSystem.instance.conversationManager.EnqueuePriority(newConversation);
 
                             }
@@ -184,9 +184,9 @@ public class LL_Goal : ILogicalLine
                         GetOurOfGoalLoop();
                     }
                 }
-                
+
                 //DialogueSystem.instance.conversationManager.conversation.IncrementProgress();
-                
+
             }
 
 
@@ -211,7 +211,7 @@ public class LL_Goal : ILogicalLine
     private static List<string> ExtractCondition(List<string> lines)
     {
         List<string> returnData = new List<string>();
-        foreach(var line in lines)
+        foreach (var line in lines)
         {
             int startIndex = line.IndexOf(CONTAINERS[0]) + 1;
             int endIndex = line.IndexOf(CONTAINERS[1]);
@@ -224,9 +224,9 @@ public class LL_Goal : ILogicalLine
 
     private string ExtractConditionLine(Conversation conversation)
     {
-        foreach(var line in conversation.GetLines())
+        foreach (var line in conversation.GetLines())
         {
-            
+
             int startIndex = line.Trim('\t').IndexOf(CONTAINERS[0]) + 1;
             int endIndex = line.Trim('\t').IndexOf(CONTAINERS[1]);
             if (startIndex == -1 || endIndex == -1)
