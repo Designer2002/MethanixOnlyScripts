@@ -46,7 +46,7 @@ public class LL_Goal : ILogicalLine
 
         if (!GoalData.isNull && GoalData.lines.Count > 0)
         {
-            Conversation newConversation = new Conversation(GoalData.lines);
+            Conversation newConversation = new Conversation(GoalData.lines, fileStartIndex: GoalData.startingIndex, fileEndIndex: GoalData.endingIndex);
             List<Conversation> newConversations = RipBigEncapsulatedConversation(newConversation);
             List<string> RawConditions = new List<string>();
             foreach (var c in newConversations)
@@ -62,7 +62,7 @@ public class LL_Goal : ILogicalLine
                 {
                     EncapsulatedData miniCondition = RipEncapsulationData(c, insideProgress[idx], false);
                     insideProgress[idx] += miniCondition.lines.Count;
-                    Conversation check = new Conversation(miniCondition.lines);
+                    Conversation check = new Conversation(miniCondition.lines, fileStartIndex: miniCondition.startingIndex, fileEndIndex: miniCondition.endingIndex);
                     if (miniCondition.lines.Count != 0)
                     {
                         if (!ConditionGoalChecks.ContainsKey(RawConditions[idx]))
@@ -100,7 +100,7 @@ public class LL_Goal : ILogicalLine
                     idx++;
                 }
                 if (idx == conversation.Count() - 1) lines_tmp.Add(conversation.GetLines()[idx]);
-                Conversation conv = new Conversation(lines_tmp);
+                Conversation conv = new Conversation(lines_tmp, fileStartIndex: conversation.fileStartIndex, fileEndIndex: conversation.fileEndIndex, file: conversation.file);
 
                 conversations.Add(conv);
             }
@@ -181,7 +181,7 @@ public class LL_Goal : ILogicalLine
                     }
                     else
                     {
-                        GetOurOfGoalLoop();
+                        GetOutOfGoalLoop();
                     }
                 }
 
@@ -200,7 +200,7 @@ public class LL_Goal : ILogicalLine
         After += conversation.Count();
     }
 
-    public static void GetOurOfGoalLoop()
+    public static void GetOutOfGoalLoop()
     {
         MainConversation.SetProgress(Ending);
         DialogueSystem.instance.conversationManager.StartConverstaion(MainConversation);

@@ -199,6 +199,7 @@ namespace LOCATIONS
         public void KillGoal()
         {
             //Debug.Log(LL_Goal.MainConversation);
+            
             LL_Goal.MainConversation.SetProgress(LL_Goal.After);
             DIALOGUE.DialogueSystem.instance.conversationManager.StartConverstaion(LL_Goal.MainConversation);
             goal = null;

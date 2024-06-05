@@ -28,7 +28,8 @@ namespace DIALOGUE.Logical_Lines
             while (panel.isWaitingOnUserChoice) yield return null;
             Choice selectedChoice = choices[panel.lastDecision.answerIdx];
             Conversation newconv = new Conversation(selectedChoice.resultLines, file: currentConverstion.file, fileStartIndex: selectedChoice.startIndex, fileEndIndex: selectedChoice.endIndex);
-            DialogueSystem.instance.conversationManager.conversation.SetProgress(data.endingIndex - currentConverstion.fileStartIndex);
+            DialogueSystem.instance.conversationManager.conversation.SetProgress(data.endingIndex - currentConverstion.fileStartIndex); //data ending index срет
+            Debug.Log(DialogueSystem.instance.conversationManager.conversation.GetProgress());
             DialogueSystem.instance.conversationManager.EnqueuePriority(newconv);
 
             AutoReader reader = DialogueSystem.instance.reader;

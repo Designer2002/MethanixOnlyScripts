@@ -54,6 +54,9 @@ namespace DIALOGUE.Logical_Lines
                     }
                     if (line.Trim('\t') == "else") data.endingIndex = i + parentStartingIndex;
                 }
+                //попытка закончилась порванным ачком
+                //if(data.endingIndex == 0) data.endingIndex = parentStartingIndex + conversation.Count();
+                //if (data.endingIndex == 0) data.endingIndex = conversation.fileEndIndex;
                 return data;
             }
 
