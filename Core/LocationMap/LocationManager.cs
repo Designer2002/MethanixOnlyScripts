@@ -199,10 +199,10 @@ namespace LOCATIONS
         public void KillGoal()
         {
             //Debug.Log(LL_Goal.MainConversation);
-            
+            goal = null;
             LL_Goal.MainConversation.SetProgress(LL_Goal.After);
             DIALOGUE.DialogueSystem.instance.conversationManager.StartConverstaion(LL_Goal.MainConversation);
-            goal = null;
+            
 
 
 
@@ -210,7 +210,7 @@ namespace LOCATIONS
 
         public void GoalInProgress()
         {
-            //LL_Goal.MainConversation = DIALOGUE.DialogueSystem.instance.conversationManager.conversation;
+            LL_Goal.MainConversation = DIALOGUE.DialogueSystem.instance.conversationManager.conversation;
             LocationExpander.instance.Hide();
             DIALOGUE.DialogueSystem.instance.DialogueContainer.show();
             DIALOGUE.DialogueSystem.instance.EnableGlobalReading();
