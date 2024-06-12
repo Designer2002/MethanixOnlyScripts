@@ -10,6 +10,7 @@ namespace CHARACTERS
         public string name = "";
         public string displayName = "";
         public string RussianName = "";
+        public string castingName = "";
         public RectTransform root = null;
         public DIALOGUE.DialogueSystem DialogueSystem => DIALOGUE.DialogueSystem.instance;
         public const bool ENABLED_ON_START = false;

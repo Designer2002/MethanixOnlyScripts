@@ -25,6 +25,7 @@ public class FilePaths
 
     //resources
     public static readonly string resources_directory = "Assets/_MAIN_/";
+    public static readonly string main_path = "_MAIN_/Resources/";
     public static readonly string resources_graphics = "Graphics/";
     public static readonly string resources_graphics_bg_photo = "Graphics/Backgrounds/Photo/";
     public static readonly string resources_graphics_bg_video = "Graphics/Backgrounds/Video/";

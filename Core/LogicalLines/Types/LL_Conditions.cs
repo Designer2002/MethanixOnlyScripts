@@ -313,6 +313,10 @@ namespace DIALOGUE.Logical_Lines
                     ParseCondition(new DIALOGUE_LINE(e));
                 }
             }
+            else
+            {
+                DialogueSystem.instance.conversationManager.conversation.SetProgress(ifData.endingIndex);
+            }
             
         }
 

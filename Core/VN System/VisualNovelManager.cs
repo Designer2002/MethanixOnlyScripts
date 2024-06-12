@@ -8,7 +8,7 @@ namespace VISUALNOVEL
     {
         public static VisualNovelManager instance { get; private set; }
         [SerializeField]
-        private VisulaNovelSO config;
+        public VisulaNovelSO config;
         private void Awake()
         {
             instance = this;

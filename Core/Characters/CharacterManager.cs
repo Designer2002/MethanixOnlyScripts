@@ -22,7 +22,7 @@ namespace CHARACTERS
         }
 
         private const string CHARACTER_NAME_ID = "<charname>";
-        private const string CHARACTER_CASTING_ID = " as ";
+        public const string CHARACTER_CASTING_ID = " as ";
        
         private string RootPath => $"Characters/{CHARACTER_NAME_ID}";
 
@@ -51,6 +51,10 @@ namespace CHARACTERS
             }
             CHARACTER_INFO infp = GetCharacterInfo(characterName);
             Character character = CreateCharacterFromInfo(infp);
+            if(infp.castingName != infp.name)
+            {
+                character.castingName = infp.name;
+            }
             characters.Add(infp.name.ToLower(), character);
             //Debug.Log($"Created character {infp.config.characterType.ToString()} - {infp.name}");
             if (revealAfterCreation) character.Show();

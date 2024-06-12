@@ -43,7 +43,15 @@ public class GoalData
     public static void Apply(GoalData gdata)
     {
         LOCATIONS.LocationGoal goal = new LOCATIONS.LocationGoal();
+        
         var data = JsonUtility.FromJson<GoalData>(gdata.dataJSON);
+        if (data == null)
+        {
+            LOCATIONS.LocationExpander.instance.Hide();
+            DIALOGUE.DialogueSystem.instance.DialogueContainer.show();
+            DIALOGUE.DialogueSystem.instance.EnableGlobalReading();
+            return;
+        }
         goal.AvailibleMoves = data.availibleMoves;
         goal.isAgile = data.isAgile;
         goal.PlayerMoves = data.playerMoves;

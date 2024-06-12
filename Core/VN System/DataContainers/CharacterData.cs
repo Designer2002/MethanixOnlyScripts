@@ -9,6 +9,7 @@ namespace VISUALNOVEL
     public class CharacterData
     {
         public string characterName;
+        public string castingName;
         public string displayName;
         public Color color;
         public int priority;
@@ -26,6 +27,7 @@ namespace VISUALNOVEL
                 if (!ch.IsVisible) continue;
                 CharacterData entry = new CharacterData();
                 entry.characterName = ch.name;
+                entry.castingName = ch.name;
                 entry.displayName = ch.displayName;
                 entry.color = ch.color;
                 entry.isFacingLeft = ch.is_facing_left;
@@ -68,7 +70,21 @@ namespace VISUALNOVEL
             List<string> cache = new List<string>();
             foreach(var characterData in data)
             {
-                Character character = CharacterManager.instance.GetCharacter(characterData.characterName, createIfNotExist: true);
+                Character character = null;
+                if(characterData.castingName == string.Empty)
+                {
+                    character = CharacterManager.instance.GetCharacter(characterData.characterName, createIfNotExist: true);
+                }
+                else
+                {
+                    character = CharacterManager.instance.GetCharacter(characterData.characterName, createIfNotExist: false);
+                    if(character == null)
+                    {
+                        string castingName = $"{characterData.characterName}{CharacterManager.CHARACTER_CASTING_ID}{characterData.castingName}";
+                        character = CharacterManager.instance.CreateCharacter(castingName);
+                    }
+                }
+                
                 character.displayName = characterData.displayName;
                 character.SetColor(characterData.color);
                 if (characterData.isHighlighted)
@@ -82,7 +98,10 @@ namespace VISUALNOVEL
                     character.FaceLeft(immediate: true);
                 }
                 else character.FaceRight(immediate: true);
+                
+                
                 character.MoveToPosition(characterData.position);
+                character.SetPosition(character.targetPosition);
                 character.IsVisible = characterData.enabled;
 
                 switch(character.config.characterType)

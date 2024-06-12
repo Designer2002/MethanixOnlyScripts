@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +13,12 @@ namespace VISUALNOVEL
         public const string FILE_TYPE = ".amogus";
         public const string SCREENSHOT_FILE_TYPE = ".jpg";
         private const float DOWNSCALE = 1;
-        private const bool encryptFiles = true;
+        public const bool encryptFiles = true;
         public bool newGame = true;
         public VN_VaribleData[] variables;
 
         public SavingsData activeState;
-
+        public static bool reload = false;
         public string timestamp;
 
 
@@ -50,6 +51,7 @@ namespace VISUALNOVEL
 
         public void Activate()
         {
+            CheckAndUpdateConversationData();
             if (activeState != null) activeState.Load();
             DIALOGUE.DialogueSystem.instance.conversationManager.architect.tmpro.ForceMeshUpdate();
             SetVariableData();
@@ -57,17 +59,17 @@ namespace VISUALNOVEL
             DIALOGUE.DialogueSystem.instance.DialogueContinuationPrompt.Hide();
         }
 
-        private string[] GetConversationData()
+        public string[] GetConversationData()
         {
             List<string> returnData = new List<string>();
             var conversations = DIALOGUE.DialogueSystem.instance.conversationManager.GetConversationQueue();
 
-            for(int i = 0; i < conversations.Length; i++)
+            for (int i = 0; i < conversations.Length; i++)
             {
                 var conversation = conversations[i];
                 string data = "";
 
-                if(conversation.file != string.Empty)
+                if (conversation.file != string.Empty)
                 {
                     var compressedData = new VNConversationDataCompressed();
                     compressedData.fileName = conversation.file;
@@ -89,9 +91,9 @@ namespace VISUALNOVEL
             return returnData.ToArray();
         }
 
-        private void SetConversationData()
+        public void SetConversationData()
         {
-            for(int i = 0; i < activeConversations.Length; i++)
+            for (int i = 0; i < activeConversations.Length; i++)
             {
                 try
                 {
@@ -125,9 +127,9 @@ namespace VISUALNOVEL
                             Debug.LogWarning("unknow format! Failed to RELOAD!");
                         }
                     }
-                    if(conversation != null && conversation.GetLines().Count > 0)
+                    if (conversation != null && conversation.GetLines().Count > 0)
                     {
-                        if(i == 0)
+                        if (i == 0)
                         {
                             DIALOGUE.DialogueSystem.instance.conversationManager.StartConverstaion(conversation);
                         }
@@ -137,7 +139,7 @@ namespace VISUALNOVEL
                         }
                     }
                 }
-                catch(System.Exception e)
+                catch (System.Exception e)
                 {
                     Debug.LogError(e.Message);
                     continue;
@@ -148,9 +150,9 @@ namespace VISUALNOVEL
         public VN_VaribleData[] GetVariableData()
         {
             List<VN_VaribleData> returnData = new List<VN_VaribleData>();
-            foreach(var database in VariableStore.databases.Values)
+            foreach (var database in VariableStore.databases.Values)
             {
-                foreach(var variable in database.variables)
+                foreach (var variable in database.variables)
                 {
                     VN_VaribleData variableData = new VN_VaribleData();
                     variableData.name = $"{database.name}.{variable.Key}";
@@ -165,10 +167,10 @@ namespace VISUALNOVEL
 
         public void SetVariableData()
         {
-            foreach(var variable in variables)
+            foreach (var variable in variables)
             {
                 string val = variable.value;
-                switch(variable.type)
+                switch (variable.type)
                 {
                     case "System.Boolean":
                         if (bool.TryParse(val, out bool b_v))
@@ -198,6 +200,47 @@ namespace VISUALNOVEL
 
                 Debug.LogError($"couldn't not interpret variable type {variable.name} = {variable.type}");
             }
+        }
+
+        public void CheckAndUpdateConversationData()
+        {
+            if (reload)
+            {
+                List<string> returnData = new List<string>();
+                var conversations = DIALOGUE.DialogueSystem.instance.conversationManager.GetConversationQueue();
+
+                for (int i = 0; i < conversations.Length; i++)
+                {
+                    var savedData = JsonUtility.FromJson<VNConversationData>(activeConversations[i]);
+                    var conversation = conversations[i];
+                    string data = "";
+
+                    if (conversation.file != string.Empty)
+                    {
+                        var compressedData = new VNConversationDataCompressed();
+                        compressedData.fileName = conversation.file;
+                        compressedData.progress = savedData.progress;
+                        compressedData.startIndex = conversation.fileStartIndex;
+                        compressedData.endIndex = conversation.fileEndIndex;
+                        data = JsonUtility.ToJson(compressedData);
+                    }
+                    else
+                    {
+                        var fullData = new VNConversationData();
+                        fullData.conversation = conversation.GetLines();
+                        fullData.progress = savedData.progress;
+                        data = JsonUtility.ToJson(fullData);
+                    }
+                    returnData.Add(data);
+                }
+                activeConversations = returnData.ToArray();
+                // Save updated data
+                string saveJSON = JsonUtility.ToJson(this);
+                FileManager.Save(filePath, saveJSON, encryptFiles);
+                reload = false; // Reset the reload flag after saving
+                
+            }
+
         }
     }
 }

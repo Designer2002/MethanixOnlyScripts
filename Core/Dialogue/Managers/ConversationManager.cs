@@ -104,7 +104,7 @@ namespace DIALOGUE
                     TryAdvanceConverstation(current);
                     continue;
                 }
-                if (rawLine == "}")
+                if (rawLine.Contains("}"))
                 {
                     TryAdvanceConverstation(current);
                     continue;
