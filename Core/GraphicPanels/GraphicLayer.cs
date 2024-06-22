@@ -25,12 +25,14 @@ namespace GRAPHICS
 
         public Coroutine SetTexture(Texture tex, string path, float transitionSpeed = 1, Texture blend = null, bool immediate = false, bool offset = false)
         {
-            if (offset) panel.transform.position = new Vector3(panel.transform.position.x, panel.transform.position.y + 55, panel.transform.position.z);  
+            VariableStore.TrySetValue("backgroundPanel", tex.name, change:false);
+            if (offset) panel.transform.position = new Vector3(panel.transform.position.x, panel.transform.position.y + 55, panel.transform.position.z);
             return createdBefore.ContainsKey(tex.name) ? GetGraphic(tex.name, transitionSpeed, blend, immediate) : CreateGraphic(tex, transitionSpeed, path, blend, immediate);
         }
 
         public Coroutine SetVideo(VideoClip video, string path, float transitionSpeed = 1, Texture blend = null, bool useAudio = false, float pspeed = 1, bool immediate = false, bool offset = false)
         {
+            VariableStore.TrySetValue("backgroundPanel", video.name, change:false);
             if (offset) panel.transform.position = new Vector3(panel.transform.position.x, panel.transform.position.y + 55, panel.transform.position.z);
             return createdBefore.ContainsKey(video.name) ? GetGraphic(video.name, transitionSpeed, blend, immediate) : CreateGraphic (video, transitionSpeed, path, blend, useAudio, pspeed, immediate);
         }

@@ -27,6 +27,7 @@ namespace LOCATIONS
 
         private void Init()
         {
+            CreateLocation("base");
             CreateLocation("entrance");
             CreateLocation("factory");
             CreateLocation("florarium");
@@ -43,8 +44,8 @@ namespace LOCATIONS
             CreateLocation("corridor");
             CreateLocation("toilet");
             CreateLocation("workplace");
-            VariableStore.CreateVariable("location", "hall");
-            currentLocation = "hall";
+            VariableStore.CreateVariable("location", "base");
+            currentLocation = "base";
             GetLocation(currentLocation).Stay();
         }
 
@@ -86,12 +87,17 @@ namespace LOCATIONS
 
         public IEnumerator Teleport(string codeWord, bool useAudio = false, bool immediate = false, float transitionSpeed = 1f, bool is_teleporting_by_button = true)
         {
+            if (currentLocation == null) yield break;
             //if(goal != null) Debug.Log($"moves - {goal.PlayerMoves}, {goal.AvailibleMoves}");
             LocationInfo.instance.Hide();
             LocationExpander.instance.Hide();
-            GetLocation(currentLocation).Leave();
+            var loc = GetLocation(currentLocation);
+            if (loc == null) yield break;
+            loc.Leave();
             currentLocation = GetLocation(codeWord).CodeWord;
-            GetLocation(currentLocation).Stay();
+            loc = GetLocation(currentLocation);
+            if (loc == null) yield break;
+            loc.Stay();
             //get blend
             Texture blend = Resources.Load<Texture>(FilePaths.GetRandomTransitionEffectPath().Replace($"{ FilePaths.resources_directory}Resources/", "").Replace(".png", "").Replace(".jpg", ""));
             //Debug.Log(FilePaths.GetRandomTransitionEffectPath().Replace($"{ FilePaths.resources_directory}Resources/", ""));

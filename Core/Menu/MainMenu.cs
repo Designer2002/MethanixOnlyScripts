@@ -23,6 +23,7 @@ public class MainMenu : MonoBehaviour
     public void StartNewGame()
     {
         VNGameSave activeFile = new VNGameSave();
+        VNGameSave.activeFile = activeFile;
         StartCoroutine(StartingGame());
     }
 
@@ -34,7 +35,7 @@ public class MainMenu : MonoBehaviour
         {
             yield return null;
         }
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Visual Novel");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Visual Novel");;
     }
 
     public void LoadGame(VNGameSave file)

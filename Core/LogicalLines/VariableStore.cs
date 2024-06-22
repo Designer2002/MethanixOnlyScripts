@@ -135,7 +135,7 @@ public class VariableStore
         return true;
     }
 
-    public static bool TrySetValue<T>(string name, T value)
+    public static bool TrySetValue<T>(string name, T value, bool change = true)
     {
         (string[] parts, Database db, string variableName) = ExtractInfo(name);
         if (!db.variables.ContainsKey(variableName))
@@ -143,7 +143,7 @@ public class VariableStore
             return false;
         }
         db.variables[variableName].Set(value);
-        OnValueChanged?.Invoke(TryGetValue(variableName, out object myVar), new ValueChangedEventArgs { Value = value });
+        if (change) OnValueChanged?.Invoke(TryGetValue(variableName, out object myVar), new ValueChangedEventArgs { Value = value });
         return true;
     }
 

@@ -90,6 +90,7 @@ namespace DIALOGUE
 
         IEnumerator RunningConversation()
         {
+            while (MainMenu.instance.is_starting) yield return null;
             while(!conversationQueue.isEmpty())
             {
                 Conversation current = conversation;

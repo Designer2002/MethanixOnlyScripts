@@ -28,6 +28,7 @@ namespace VISUALNOVEL
         private void Awake()
         {
             instance = this;
+            VariableStore.CreateVariable<string>(name: "backgroundPanel", defaultValue: "");
         }
 
         private void Start()

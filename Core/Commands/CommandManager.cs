@@ -128,6 +128,7 @@ public class CommandManager : MonoBehaviour
         CommandProcess cmd = new CommandProcess(processID, commandName, command, null, args, null);
         activeProcesses.Add(cmd);
         Coroutine c = StartCoroutine(RunningProcess(cmd));
+        //Debug.Log(commandName);
         cmd.runningProcess = new CoroutineWrapper(this, c);
         return cmd.runningProcess;
     }

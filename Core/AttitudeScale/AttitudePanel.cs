@@ -57,9 +57,11 @@ public class AttitudePanel : MonoBehaviour
         if (is_displaying)
         {
             StopCoroutine(co_displaying);
+            cg.Hide();
             return co_displaying;
         }
-        co_displaying = StartCoroutine(Displaying(positive));
+        co_displaying = StartCoroutine(Displaying(positive)); 
+
         return co_displaying;
     }
 

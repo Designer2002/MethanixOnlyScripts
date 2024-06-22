@@ -72,7 +72,6 @@ namespace VISUALNOVEL
                             if (clip != null)
                                 layer.SetVideo(clip, layerData.graphicPath, immediate: true);
                         }
-
                     }
                 }
                 cache.Add(panel.panelName);

@@ -29,6 +29,7 @@ public class FilePaths
     public static readonly string resources_graphics = "Graphics/";
     public static readonly string resources_graphics_bg_photo = "Graphics/Backgrounds/Photo/";
     public static readonly string resources_graphics_bg_video = "Graphics/Backgrounds/Video/";
+    public static readonly string resources_graphics_other = "Graphics/Other/";
     public static readonly string resources_graphics_transition = "Graphics/TransitionEffects/";
 
     public static readonly string resources_audio_locations = "Audio/Music/LocationTracks/";

@@ -21,6 +21,9 @@ namespace VISUALNOVEL
         public static bool reload = false;
         public string timestamp;
 
+        private const string BACK_PANEL = "background";
+        private const string BASE_LOCATION_CODEWORD = "base";
+
 
         public string filePath => $"{FilePaths.game_saves}{slotNumber}{FILE_TYPE}";
         public string screenshotPath => $"{FilePaths.game_saves}{slotNumber}{SCREENSHOT_FILE_TYPE}";
@@ -51,11 +54,16 @@ namespace VISUALNOVEL
 
         public void Activate()
         {
+            
+            
             CheckAndUpdateConversationData();
             if (activeState != null) activeState.Load();
+            GRAPHICS.GraphicPanelManager.instance.StartCoroutine(TryFixGraphics());
             DIALOGUE.DialogueSystem.instance.conversationManager.architect.tmpro.ForceMeshUpdate();
+
             SetVariableData();
             SetConversationData();
+
             DIALOGUE.DialogueSystem.instance.DialogueContinuationPrompt.Hide();
         }
 
@@ -162,6 +170,34 @@ namespace VISUALNOVEL
                     returnData.Add(variableData);
                 }
             }
+
+            if(returnData.Count != 0)
+            {
+                if (!returnData.Where(i => i.name == BACK_PANEL).Any())
+                {
+                    if (VariableStore.TryGetValue(BACK_PANEL, out var back))
+                    {
+                        returnData.Add(new VN_VaribleData()
+                        {
+                            name = BACK_PANEL,
+                            value = back.ToString(),
+                            type = "System.String"
+                        });
+                    }
+                }
+                if (!returnData.Where(i => i.name == "location").Any())
+                {
+                    if (VariableStore.TryGetValue("location", out var l))
+                    {
+                        returnData.Add(new VN_VaribleData()
+                        {
+                            name = "location",
+                            value = l.ToString(),
+                            type = "System.String"
+                        });
+                    }
+                }
+            }
             return returnData.ToArray();
         }
 
@@ -194,10 +230,11 @@ namespace VISUALNOVEL
                         }
                         break;
                     case "System.String":
-                        VariableStore.TrySetValue(variable.name, val);
+                        if (variable.name == "location" && val == BASE_LOCATION_CODEWORD) continue;
+                       // if (variable.name == "backgroundPanel" && val == string.Empty) continue;
+                        VariableStore.TrySetValue(variable.name, val, change:false);
                         continue;
                 }
-
                 Debug.LogError($"couldn't not interpret variable type {variable.name} = {variable.type}");
             }
         }
@@ -208,7 +245,6 @@ namespace VISUALNOVEL
             {
                 List<string> returnData = new List<string>();
                 var conversations = DIALOGUE.DialogueSystem.instance.conversationManager.GetConversationQueue();
-
                 for (int i = 0; i < conversations.Length; i++)
                 {
                     var savedData = JsonUtility.FromJson<VNConversationData>(activeConversations[i]);
@@ -233,14 +269,47 @@ namespace VISUALNOVEL
                     }
                     returnData.Add(data);
                 }
-                activeConversations = returnData.ToArray();
-                // Save updated data
+                if(returnData.Count != 0) activeConversations = returnData.ToArray();
+                variables = GetVariableData();
                 string saveJSON = JsonUtility.ToJson(this);
                 FileManager.Save(filePath, saveJSON, encryptFiles);
                 reload = false; // Reset the reload flag after saving
+
+
                 
             }
 
+        }
+
+        public IEnumerator TryFixGraphics()
+        {
+            VariableStore.TryGetValue("backgroundPanel", out var g);
+            string graphicname = g.ToString();
+            var panel = GRAPHICS.GraphicPanelManager.instance.GetPanel(BACK_PANEL);
+            if (graphicname != panel.layers[panel.layers.Count - 1].currentGraphic.graphicName)
+            {
+                UnityEngine.Object graphic = null;
+                var pathToGaphic = FilePaths.GetPath(FilePaths.resources_graphics_bg_photo, graphicname);
+                graphic = Resources.Load<Texture>(pathToGaphic);
+                if (graphic == null)
+                {
+                    pathToGaphic = FilePaths.GetPath(FilePaths.resources_graphics_bg_video, graphicname);
+                    graphic = Resources.Load<UnityEngine.Video.VideoClip>(pathToGaphic);
+                }
+                if (graphic == null)
+                {
+                    Debug.LogWarning("NULL GRAPHIC");
+                    yield break;
+                }
+                GRAPHICS.GraphicLayer gl = panel.GetLayer(panel.layers.Count - 1);
+                if (graphic is Texture) yield return gl.SetTexture(graphic as Texture, path: pathToGaphic, immediate: true);
+                if (graphic is UnityEngine.Video.VideoClip) yield return gl.SetVideo(graphic as UnityEngine.Video.VideoClip, path: pathToGaphic,immediate: true);
+
+            }
+            else
+            {
+                yield break;
+            }
         }
     }
 }

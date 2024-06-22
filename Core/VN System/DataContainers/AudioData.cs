@@ -19,7 +19,7 @@ namespace VISUALNOVEL
             if (channel.activeTrack == null) return;
             var track = channel.activeTrack;
             trackName = track.name;
-            trackPath = track.path;
+            trackPath = channel.channelIdx == 0 ? $"{FilePaths.resources_audio_locations}{trackName}" : $"{FilePaths.resources_audio_ambience}{trackName}";
             trackVolume = track.volume;
             trackPitch = track.pitch;
             loop = track.loop;
@@ -48,7 +48,7 @@ namespace VISUALNOVEL
                     AudioClip clip = SavingsCache.LoadAudio(channelData.trackPath);
                     if (clip != null)
                     {
-                        channel.StopTrack(immediate: true);
+                        if(channel.activeTrack != null) channel.StopTrack(immediate: true);
                         channel.PlayTrack(clip, channelData.loop, channelData.trackVolume, channelData.trackVolume, channelData.trackPitch, channelData.trackPath);
                     }
                 }
