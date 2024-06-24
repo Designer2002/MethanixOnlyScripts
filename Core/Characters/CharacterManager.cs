@@ -21,6 +21,11 @@ namespace CHARACTERS
             instance = this;
         }
 
+        private void OnDestroy()
+        {
+            characters.Clear();
+        }
+
         private const string CHARACTER_NAME_ID = "<charname>";
         public const string CHARACTER_CASTING_ID = " as ";
        

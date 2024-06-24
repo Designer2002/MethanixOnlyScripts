@@ -24,6 +24,7 @@ public class MainMenu : MonoBehaviour
     {
         VNGameSave activeFile = new VNGameSave();
         VNGameSave.activeFile = activeFile;
+        
         StartCoroutine(StartingGame());
     }
 

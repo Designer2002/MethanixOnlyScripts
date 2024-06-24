@@ -61,6 +61,13 @@ public class Config : Page
         if (activePanel != null && activePanel != panel) activePanel.SetActive(false);
         panel.SetActive(true);
         activePanel = panel;
+        VN_ConfigurationsData.activeConfig.Load();
+    }
+
+    public override void Close(bool closeAllMenus = false)
+    {
+        base.Close(closeAllMenus);
+        VN_ConfigurationsData.activeConfig.Save();
     }
 
     public void SetAvailibleResolution()

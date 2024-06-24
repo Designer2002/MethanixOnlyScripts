@@ -145,7 +145,7 @@ namespace CHARACTERS
         {
             (Vector2 minAnchorTarget, Vector2 maxAnchorTarget) = ConvertUiTargetPositionToRelativeCharacterTargetAnchors(position);
             Vector2 padding = root.anchorMax - root.anchorMin;
-            while (root.anchorMin != minAnchorTarget || root.anchorMax != maxAnchorTarget)
+            while (root != null && (root.anchorMin != minAnchorTarget || root.anchorMax != maxAnchorTarget))
             {
                 root.anchorMin = smooth ?
                     Vector2.Lerp(root.anchorMin, minAnchorTarget, speed * Time.deltaTime)
