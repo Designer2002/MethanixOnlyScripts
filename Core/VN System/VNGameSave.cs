@@ -59,12 +59,15 @@ namespace VISUALNOVEL
             CheckAndUpdateConversationData();
             if (activeState != null) activeState.Load();
             GRAPHICS.GraphicPanelManager.instance.StartCoroutine(TryFixGraphics());
+            DIALOGUE.DialogueSystem.instance.architect.Clear();
             DIALOGUE.DialogueSystem.instance.conversationManager.architect.tmpro.ForceMeshUpdate();
 
             SetVariableData();
             SetConversationData();
 
             DIALOGUE.DialogueSystem.instance.DialogueContinuationPrompt.Hide();
+
+            Debug.Log(DIALOGUE.DialogueSystem.instance.conversationManager.conversation.GetProgress());
         }
 
         public string[] GetConversationData()
@@ -81,6 +84,7 @@ namespace VISUALNOVEL
                 {
                     var compressedData = new VNConversationDataCompressed();
                     compressedData.fileName = conversation.file;
+                    //compressedData.progress = LOCATIONS.LocationManager.instance.goal != null ? LOCATIONS.LocationManager.instance.RollBackProgress : conversation.GetProgress();
                     compressedData.progress = conversation.GetProgress();
                     compressedData.startIndex = conversation.fileStartIndex;
                     compressedData.endIndex = conversation.fileEndIndex;
@@ -90,17 +94,18 @@ namespace VISUALNOVEL
                 {
                     var fullData = new VNConversationData();
                     fullData.conversation = conversation.GetLines();
+                    //fullData.progress = LOCATIONS.LocationManager.instance.goal != null ? LOCATIONS.LocationManager.instance.RollBackProgress : conversation.GetProgress();
                     fullData.progress = conversation.GetProgress();
                     data = JsonUtility.ToJson(fullData);
                 }
                 returnData.Add(data);
             }
-
             return returnData.ToArray();
         }
 
         public void SetConversationData()
         {
+
             for (int i = 0; i < activeConversations.Length; i++)
             {
                 try
@@ -135,10 +140,12 @@ namespace VISUALNOVEL
                             Debug.LogWarning("unknow format! Failed to RELOAD!");
                         }
                     }
+
                     if (conversation != null && conversation.GetLines().Count > 0)
                     {
                         if (i == 0)
                         {
+                            DIALOGUE.DialogueSystem.instance.architect.Clear();
                             DIALOGUE.DialogueSystem.instance.conversationManager.StartConverstaion(conversation);
                         }
                         else
@@ -153,6 +160,14 @@ namespace VISUALNOVEL
                     continue;
                 }
             }
+
+            if (LOCATIONS.LocationManager.instance.goal != null)
+            {
+                //Debug.Log("KILLED GOAL");
+                LOCATIONS.LocationManager.instance.KillGoal(rollback: true);
+                if (LOCATIONS.LocationManager.instance.OldLocation != null) VNMenuManager.instance.StartCoroutine(LOCATIONS.LocationManager.instance.Teleport(LOCATIONS.LocationManager.instance.OldLocation, immediate: true, is_teleporting_by_button: false));
+            }
+            LOCATIONS.LocationExpander.instance.Expander.interactable = false;
         }
 
         public VN_VaribleData[] GetVariableData()
@@ -218,7 +233,7 @@ namespace VISUALNOVEL
                     case "System.Int32":
                         if (int.TryParse(val, out int i_v))
                         {
-                            VariableStore.TrySetValue(variable.name, i_v);
+                            VariableStore.TrySetValue(variable.name, i_v, create: true);
                             continue;
                         }
                         break;
@@ -230,13 +245,16 @@ namespace VISUALNOVEL
                         }
                         break;
                     case "System.String":
-                        if (variable.name == "location" && val == BASE_LOCATION_CODEWORD) continue;
+                        if (variable.name.Contains("location") && val == BASE_LOCATION_CODEWORD) continue;
                        // if (variable.name == "backgroundPanel" && val == string.Empty) continue;
                         VariableStore.TrySetValue(variable.name, val, change:false);
                         continue;
                 }
+                
                 Debug.LogError($"couldn't not interpret variable type {variable.name} = {variable.type}");
             }
+            VariableStore.TryGetValue("location", out object location);
+            VNMenuManager.instance.StartCoroutine(LOCATIONS.LocationManager.instance.Teleport(location.ToString(), immediate: true, is_teleporting_by_button: false));
         }
 
         public void CheckAndUpdateConversationData()

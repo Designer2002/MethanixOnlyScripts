@@ -21,6 +21,7 @@ public class LL_Goal : ILogicalLine
     public static int Starting { get; set; }
 
     public static int After { get; set; }
+    public static int RollBack => Starting - 2;
 
     public static Conversation MainConversation;
 
@@ -173,6 +174,7 @@ public class LL_Goal : ILogicalLine
                             DialogueSystem.instance.conversationManager.EnqueuePriority(pair.Value);
                         }
                         //SetProgressAfterGoalChecks(pair.Value);
+                        DialogueSystem.instance.architect.Clear();
                         DialogueSystem.instance.conversationManager.StartConverstaion(DialogueSystem.instance.conversationManager.conversation);
                         DialogueSystem.instance.DialogueContainer.show();
                         DialogueSystem.instance.EnableGlobalReading();
@@ -202,7 +204,7 @@ public class LL_Goal : ILogicalLine
 
     public static void GetOutOfGoalLoop()
     {
-        MainConversation.SetProgress(Ending);
+        if(MainConversation != null) MainConversation.SetProgress(Ending);
         DialogueSystem.instance.conversationManager.StartConverstaion(MainConversation);
         DialogueSystem.instance.DialogueContainer.hide();
         DialogueSystem.instance.DisableGlobalReading();

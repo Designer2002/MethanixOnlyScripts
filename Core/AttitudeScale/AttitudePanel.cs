@@ -14,7 +14,7 @@ public class AttitudePanel : MonoBehaviour
     [SerializeField]
     UnityEngine.UI.Image handle;
 
-    public int Value;
+    public int Value { get; set; } = 0;
 
     private Color32 color;
 

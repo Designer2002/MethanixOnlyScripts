@@ -135,12 +135,13 @@ public class VariableStore
         return true;
     }
 
-    public static bool TrySetValue<T>(string name, T value, bool change = true)
+    public static bool TrySetValue<T>(string name, T value, bool change = true, bool create = false)
     {
         (string[] parts, Database db, string variableName) = ExtractInfo(name);
         if (!db.variables.ContainsKey(variableName))
         {
-            return false;
+            if (!create) return false;
+            else CreateVariable(name, value);
         }
         db.variables[variableName].Set(value);
         if (change) OnValueChanged?.Invoke(TryGetValue(variableName, out object myVar), new ValueChangedEventArgs { Value = value });

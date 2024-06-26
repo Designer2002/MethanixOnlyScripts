@@ -74,8 +74,7 @@ namespace COMMANDS
         {
             var c = CharacterManager.instance.GetCharacter(data, createIfNotExist: false);
             if (c == null) yield break;
-            object attitude;
-            VariableStore.TryGetValue($"{c.name}.attitude", out attitude);
+            VariableStore.TryGetValue($"{c.name}.attitude", out object attitude);
             Debug.Log(int.Parse(attitude.ToString()));
             AttitudePanel.instance.Value = int.Parse(attitude.ToString());
             VariableStore.TrySetValue($"{c.name}.attitude", int.Parse(attitude.ToString()) - 1);
@@ -87,8 +86,8 @@ namespace COMMANDS
         {
             var c = CharacterManager.instance.GetCharacter(data, createIfNotExist: false);
             if (c == null) yield break;
-            object attitude;
-            VariableStore.TryGetValue($"{c.name}.attitude", out attitude);
+            VariableStore.TryGetValue($"{c.name}.attitude", out object attitude);
+            Debug.Log(int.Parse(attitude.ToString()));
             AttitudePanel.instance.Value = int.Parse(attitude.ToString()); 
             VariableStore.TrySetValue($"{c.name}.attitude", int.Parse(attitude.ToString()) + 1);
             yield return DIALOGUE.NotificationPanel.instance.Display($"{c.RussianName} улучшил отношение к тебе!");

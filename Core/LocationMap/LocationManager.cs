@@ -13,13 +13,20 @@ namespace LOCATIONS
         public LocationGoal goal;
         private GRAPHICS.GraphicLayer gl;
         public int convProgress;
+        public int RollBackProgress { get; set; }
+        public string OldLocation { get; set; }
+        public DIALOGUE.Conversation OldConversation;
         public ConversationStatus Status { get; set; }
         
         public enum ConversationStatus { Top, Process, End }
         
         public string currentLocation { get; private set; }
         private void Awake()
-        {
+        {  
+            if (instance != this)
+            {
+                Destroy(instance);
+            }
             instance = this;
         }
 
@@ -67,7 +74,7 @@ namespace LOCATIONS
             {
                 //Debug.Log($"check location, {e.ValueA.ToString()} == {e.ValueB.ToString()} - {e.ValueA.ToString() == e.ValueB.ToString()}");
                 VariableCheckingLocation = e.ValueB.ToString();
-                if(goal!=null)StartCoroutine(goal.Pause(e.ValueA.ToString() == e.ValueB.ToString()));
+                if(goal!=null && instance == this)StartCoroutine(goal.Pause(e.ValueA.ToString() == e.ValueB.ToString()));
             }
         }
 
@@ -78,7 +85,7 @@ namespace LOCATIONS
                 LL_Goal.LoopProgress();
 
             }
-            if (locations.ContainsKey(e.Value.ToString()) && currentLocation != e.Value.ToString())
+            if (instance == this && locations.ContainsKey(e.Value.ToString()) && currentLocation != e.Value.ToString())
             {
                 StartCoroutine(Teleport(e.Value.ToString().Trim('\"'), is_teleporting_by_button: false));
                // Debug.Log($"changing location -> {currentLocation}");
@@ -195,19 +202,36 @@ namespace LOCATIONS
             {
                 targetLocation = target,
                 isAgile = agile,
-                AvailibleMoves = moves
+                AvailibleMoves = moves,
+                convProgress = convProgress
             };
             DIALOGUE.DialogueSystem.instance.DialogueContainer.hide();
             DIALOGUE.DialogueSystem.instance.DisableGlobalReading();
             convProgress = DIALOGUE.DialogueSystem.instance.conversationManager.convProgress;
         }
 
-        public void KillGoal()
+        public void KillGoal(bool rollback = false)
         {
             //Debug.Log(LL_Goal.MainConversation);
             goal = null;
-            LL_Goal.MainConversation.SetProgress(LL_Goal.After);
-            DIALOGUE.DialogueSystem.instance.conversationManager.StartConverstaion(LL_Goal.MainConversation);
+            if (LL_Goal.MainConversation != null)
+            {
+                if(rollback)
+                {
+                    if (LL_Goal.MainConversation.Count() < 2 && OldConversation != null)
+                    {
+                        LL_Goal.MainConversation = OldConversation;
+                    }
+                    LL_Goal.MainConversation.SetProgress(LL_Goal.RollBack);
+                    DIALOGUE.DialogueSystem.instance.conversationManager.StartConverstaion(LL_Goal.MainConversation);
+                    
+                }
+                else
+                {
+                    LL_Goal.MainConversation.SetProgress(LL_Goal.After);
+                    DIALOGUE.DialogueSystem.instance.conversationManager.StartConverstaion(LL_Goal.MainConversation);
+                }
+            }
             
 
 

@@ -24,7 +24,6 @@ namespace VISUALNOVEL
             List<CharacterData> characters = new List<CharacterData>();
             foreach (var ch in CharacterManager.instance.allCharacters)
             {
-                if (!ch.IsVisible) continue;
                 CharacterData entry = new CharacterData();
                 entry.characterName = ch.name;
                 entry.castingName = ch.name;

@@ -58,6 +58,7 @@ namespace DIALOGUE
         public int Count() => lines.Count;
         public List<string> GetLines() => lines;
         public string currentLine() => lines[progress];
+        public string nextLine() => lines[progress + 1];
         public bool HasReachedEnd() => progress >= lines.Count;
 
         public void SetLocationManagerStatusToTop(object sender, System.EventArgs e)
@@ -67,6 +68,12 @@ namespace DIALOGUE
                 LOCATIONS.LocationManager.instance.Status = LOCATIONS.LocationManager.ConversationStatus.Top;
                 UnityEngine.Debug.Log("TOP!!!");
             }
+        }
+
+        public bool TryStepNext()
+        {
+            if (progress < lines.Count - 1) return true;
+            return false;
         }
     }
 }

@@ -273,4 +273,9 @@ public class TextArchitect
         buildProcess = null;
         hurryup = false;
     }
+
+    public void Clear()
+    {
+        tmpro.ClearMesh();
+    }
 }

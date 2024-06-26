@@ -13,6 +13,7 @@ public class MainMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         mainCG = new DIALOGUE.CanvasGroupController(this, mainPanel);
         AUDIO.AudioManager.instance.PlayTrack(menuMusic, startingVolume: 1);
     }
@@ -30,13 +31,14 @@ public class MainMenu : MonoBehaviour
 
     private IEnumerator StartingGame()
     {
+        if(VN_ConfigurationsData.activeConfig != null) VN_ConfigurationsData.activeConfig.Save();
         mainCG.Hide();
         AUDIO.AudioManager.instance.StopTrack(0);
         while(mainCG.is_Visible)
         {
             yield return null;
         }
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Visual Novel");;
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Visual Novel");
     }
 
     public void LoadGame(VNGameSave file)

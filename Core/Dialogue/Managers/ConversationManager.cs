@@ -93,7 +93,7 @@ namespace DIALOGUE
             while(!conversationQueue.isEmpty())
             {
                 Conversation current = conversation;
-                if (current.HasReachedEnd())
+                if (current.HasReachedEnd() || current.Count() == 0)
                 {
                     conversationQueue.Dequeue();
                     continue;
@@ -145,6 +145,12 @@ namespace DIALOGUE
 
         private void TryAdvanceConverstation(Conversation conversation)
         {
+            if (conversation.TryStepNext() && conversation.nextLine().Contains("goal("))
+            {
+                LOCATIONS.LocationManager.instance.RollBackProgress = conversation.GetProgress() - 1;
+                LOCATIONS.LocationManager.instance.OldLocation = LOCATIONS.LocationManager.instance.currentLocation;
+                LOCATIONS.LocationManager.instance.OldConversation = this.conversation;
+            }
             conversation.IncrementProgress();
             if (conversation != conversationQueue.top) return;
             if (conversation.HasReachedEnd())
