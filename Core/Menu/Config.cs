@@ -35,7 +35,7 @@ public class Config : Page
     }
     private void OnApplicationQuit()
     {
-        VN_ConfigurationsData.activeConfig.Save();
+        if(VN_ConfigurationsData.activeConfig != null) VN_ConfigurationsData.activeConfig.Save();
         VN_ConfigurationsData.activeConfig = null;
     }
     public void LoadConfig()

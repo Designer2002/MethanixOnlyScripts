@@ -11,6 +11,14 @@ namespace LOCATIONS
         public static Dictionary<string, Location> locations = new Dictionary<string, Location>();
         public LocationConfigurationSO config;
         public LocationGoal goal;
+        [SerializeField]
+        private UnityEngine.UI.Button SaveButton;
+        [SerializeField]
+        private UnityEngine.UI.Button LoadButton;
+        [SerializeField]
+        private UnityEngine.UI.Button NavSaveButton;
+        [SerializeField]
+        private UnityEngine.UI.Button NavLoadButton;
         private GRAPHICS.GraphicLayer gl;
         public int convProgress;
         public int RollBackProgress { get; set; }
@@ -207,6 +215,10 @@ namespace LOCATIONS
             };
             DIALOGUE.DialogueSystem.instance.DialogueContainer.hide();
             DIALOGUE.DialogueSystem.instance.DisableGlobalReading();
+            SaveButton.interactable = false;
+            LoadButton.interactable = false;
+            NavLoadButton.gameObject.SetActive(false);
+            NavSaveButton.gameObject.SetActive(false);
             convProgress = DIALOGUE.DialogueSystem.instance.conversationManager.convProgress;
         }
 
@@ -232,7 +244,10 @@ namespace LOCATIONS
                     DIALOGUE.DialogueSystem.instance.conversationManager.StartConverstaion(LL_Goal.MainConversation);
                 }
             }
-            
+            SaveButton.interactable = true;
+            LoadButton.interactable = true;
+            NavLoadButton.gameObject.SetActive(true);
+            NavSaveButton.gameObject.SetActive(true);
 
 
 

@@ -27,7 +27,6 @@ namespace VISUALNOVEL
             base.Open();
             if (!loadedFilesForFirstTime)
                 PopulateSaveSlotsForPage(currentPage);
-
         }
         private void Awake()
         {

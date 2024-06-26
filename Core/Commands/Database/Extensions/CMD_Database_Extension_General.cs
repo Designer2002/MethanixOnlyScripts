@@ -107,6 +107,7 @@ namespace COMMANDS
 
         private static void Notify(string[] data)
         {
+            Debug.Log(data);
             List<string> newdata = data.ToList();
             newdata.Insert(0, "-t");
             string message;

@@ -6,7 +6,7 @@ namespace VISUALNOVEL
 {
     public class Page : MonoBehaviour
     {
-        public enum PageType { SAVE_AND_LOAD, CONFIG, RULES };
+        public enum PageType { SAVE_AND_LOAD, CONFIG, RULES, BAD_SAVE };
         public PageType pageType;
 
         private const string OPEN = "Open";

@@ -161,12 +161,12 @@ namespace VISUALNOVEL
                 }
             }
 
-            if (LOCATIONS.LocationManager.instance.goal != null)
-            {
-                //Debug.Log("KILLED GOAL");
-                LOCATIONS.LocationManager.instance.KillGoal(rollback: true);
-                if (LOCATIONS.LocationManager.instance.OldLocation != null) VNMenuManager.instance.StartCoroutine(LOCATIONS.LocationManager.instance.Teleport(LOCATIONS.LocationManager.instance.OldLocation, immediate: true, is_teleporting_by_button: false));
-            }
+            //if (LOCATIONS.LocationManager.instance.goal != null)
+            //{
+            //    //Debug.Log("KILLED GOAL");
+            //    //LOCATIONS.LocationManager.instance.KillGoal(rollback: true);
+            //    //if (LOCATIONS.LocationManager.instance.OldLocation != null) VNMenuManager.instance.StartCoroutine(LOCATIONS.LocationManager.instance.Teleport(LOCATIONS.LocationManager.instance.OldLocation, immediate: true, is_teleporting_by_button: false));
+            //}
             LOCATIONS.LocationExpander.instance.Expander.interactable = false;
         }
 

@@ -83,10 +83,12 @@ namespace VISUALNOVEL
 
         public void Save()
         {
+            
             var activeSave = VNGameSave.activeFile;
             activeSave.slotNumber = fileNumber;
             activeSave.Save();
             PopulateDetailsFromFile(SaveAndLoad.instance.menuFunction, activeSave);
+
         }
     }
 }
