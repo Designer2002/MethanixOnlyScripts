@@ -48,6 +48,7 @@ namespace DIALOGUE
             else
             {
                 DestroyImmediate(gameObject);
+
             }
             
         }

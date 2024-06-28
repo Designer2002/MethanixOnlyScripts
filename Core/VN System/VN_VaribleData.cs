@@ -10,5 +10,7 @@ namespace VISUALNOVEL
         public string name;
         public string value;
         public string type;
+        //public bool flag;
+        //flag means NEED to update
     }
 }

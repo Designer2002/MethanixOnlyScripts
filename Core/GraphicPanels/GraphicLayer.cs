@@ -23,18 +23,25 @@ namespace GRAPHICS
             return null;
         }
 
-        public Coroutine SetTexture(Texture tex, string path, float transitionSpeed = 1, Texture blend = null, bool immediate = false, bool offset = false)
+        public Coroutine SetTexture(Texture tex, string path, float transitionSpeed = 1, Texture blend = null, bool immediate = false, bool offset = false, bool change = true)
         {
-            VariableStore.TrySetValue("backgroundPanel", tex.name, change:false);
+            if(change)CheckVariable(tex.name);
             if (offset) panel.transform.position = new Vector3(panel.transform.position.x, panel.transform.position.y + 55, panel.transform.position.z);
             return createdBefore.ContainsKey(tex.name) ? GetGraphic(tex.name, transitionSpeed, blend, immediate) : CreateGraphic(tex, transitionSpeed, path, blend, immediate);
         }
 
-        public Coroutine SetVideo(VideoClip video, string path, float transitionSpeed = 1, Texture blend = null, bool useAudio = false, float pspeed = 1, bool immediate = false, bool offset = false)
+        public Coroutine SetVideo(VideoClip video, string path, float transitionSpeed = 1, Texture blend = null, bool useAudio = false, float pspeed = 1, bool immediate = false, bool offset = false, bool change = true)
         {
-            VariableStore.TrySetValue("backgroundPanel", video.name, change:false);
+            if(change)CheckVariable(video.name);
             if (offset) panel.transform.position = new Vector3(panel.transform.position.x, panel.transform.position.y + 55, panel.transform.position.z);
             return createdBefore.ContainsKey(video.name) ? GetGraphic(video.name, transitionSpeed, blend, immediate) : CreateGraphic (video, transitionSpeed, path, blend, useAudio, pspeed, immediate);
+        }
+
+        private void CheckVariable(string name)
+        {
+            VariableStore.TryGetValue("backgroundPanel", out object back);
+            VariableStore.TrySetValue("backgroundPanel", name, change: false);
+            
         }
 
         public Coroutine SetVideo(string path, float transitionSpeed = 1, Texture blend = null, bool useAudio = false, float pspeed = 1, bool immediate = false)

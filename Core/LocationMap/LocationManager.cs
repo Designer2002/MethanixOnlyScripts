@@ -109,6 +109,7 @@ namespace LOCATIONS
             var loc = GetLocation(currentLocation);
             if (loc == null) yield break;
             loc.Leave();
+            Debug.Log(codeWord);
             currentLocation = GetLocation(codeWord).CodeWord;
             loc = GetLocation(currentLocation);
             if (loc == null) yield break;
@@ -137,16 +138,18 @@ namespace LOCATIONS
                     transitionSpeed: transitionSpeed, 
                     blend, 
                     immediate: 
-                    immediate);
+                    immediate,
+                    change: false);
             if (graphic is UnityEngine.Video.VideoClip) yield return gl
                     .SetVideo
-                    (graphic as UnityEngine.Video.VideoClip, 
-                    path: pathToGaphic, 
-                    transitionSpeed: 
-                    transitionSpeed, 
-                    blend, 
-                    useAudio: useAudio, 
-                    immediate: immediate);
+                    (graphic as UnityEngine.Video.VideoClip,
+                    path: pathToGaphic,
+                    transitionSpeed:
+                    transitionSpeed,
+                    blend,
+                    useAudio: useAudio,
+                    immediate: immediate, 
+                    change: false);
 
             AUDIO.AudioManager.instance.PlayTrack($"{ FilePaths.resources_audio_locations}{codeWord}");
             if (SearchedObjectManager.instance.IsAnythingToSearch)

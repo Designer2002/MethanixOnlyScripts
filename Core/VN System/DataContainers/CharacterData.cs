@@ -44,12 +44,21 @@ namespace VISUALNOVEL
                         SpriteData sd = new SpriteData();
                         sd.layers = new List<SpriteData.LayerData>();
                         Character_Sprite sc = ch as Character_Sprite;
-                        foreach(var layer in sc.layers[0])
+                        foreach(var layer in sc.layers)
                         {
-                            var layerData = new SpriteData.LayerData();
-                            layerData.color = layer.renderer.color;
-                            layerData.spriteName = layer.renderer.sprite.name;
-                            sd.layers.Add(layerData);
+                            try
+                            {
+                                var layerData = new SpriteData.LayerData();
+                                layerData.color = layer.renderer.color;
+                                layerData.spriteName = layer.renderer.sprite.name;
+                                sd.layers.Add(layerData);
+                            }
+                            catch 
+                            {
+                                Debug.Log(sc.name);
+                                Debug.Log(layer.renderer) ;
+
+                            }
                         }
 
                         entry.dataJSON = JsonUtility.ToJson(sd);
@@ -112,7 +121,7 @@ namespace VISUALNOVEL
                         for(int i = 0; i < sd.layers.Count; i++)
                         {
                             var layer = sd.layers[i];
-                            if(cs.layers[0][i].renderer.sprite != null && cs.layers[0][i].renderer.sprite.name != layer.spriteName)
+                            if(cs.layers[i].renderer.sprite != null && cs.layers[i].renderer.sprite.name != layer.spriteName)
                             {
                                 Sprite sprite = cs.GetSprite(layer.spriteName);
                                 if (sprite != null) cs.SetSprite(sprite);
@@ -136,8 +145,8 @@ namespace VISUALNOVEL
             [System.Serializable]
             public class LayerData
             {
-                public string spriteName;
-                public Color color;
+                public string spriteName { get; set; } = "";
+                public Color color { get; set; } = Color.white;
             }
         }
     }

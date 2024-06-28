@@ -14,7 +14,7 @@ namespace DIALOGUE
 
         public static bool userPrompt = false;
 
-        private Logical_Lines.LogicalLineManager LogicalLineManager;
+        public Logical_Lines.LogicalLineManager LogicalLineManager { get; private set; }
         public bool isRunning => process != null;
         public TextArchitect architect = null;
 
@@ -87,6 +87,8 @@ namespace DIALOGUE
             process = null;
 
         }
+
+        
 
         IEnumerator RunningConversation()
         {

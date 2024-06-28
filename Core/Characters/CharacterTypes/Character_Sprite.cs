@@ -35,9 +35,8 @@ namespace CHARACTERS
             Debug.Log($"Created character '{name}'");
         }
 
-        public List<List<CharacterSpriteLayer>> layers = new List<List<CharacterSpriteLayer>>();
-        public List<CharacterSpriteLayer> sublayersBody = new List<CharacterSpriteLayer>();
-        public List<CharacterSpriteLayer> sublayersFace = new List<CharacterSpriteLayer>();
+        public List<CharacterSpriteLayer> layers = new List<CharacterSpriteLayer>();
+
 
         private void GetLayers()
         {
@@ -51,11 +50,11 @@ namespace CHARACTERS
             for (int i = 0; i < layer0.childCount; i++)
             {
                 Transform child = layer0.transform.GetChild(i);
-                Image rendererImage = child.GetComponentInChildren<Image>();
+                Image rendererImage = child.GetComponent<Image>();
                 if (rendererImage != null)
                 {
                     CharacterSpriteLayer layer = new CharacterSpriteLayer(rendererImage, i);
-                    sublayersBody.Add(layer);
+                    layers.Add(layer);
                     child.name = $"layer: {i}";
 
                 }
@@ -66,26 +65,22 @@ namespace CHARACTERS
                 for (int i = 0; i < layer1.childCount; i++)
                 {
                     Transform child = layer1.transform.GetChild(i);
-                    Image rendererImage = child.GetComponentInChildren<Image>();
+                    Image rendererImage = child.GetComponent<Image>();
                     if (rendererImage != null)
                     {
                         CharacterSpriteLayer layer = new CharacterSpriteLayer(rendererImage, i);
-                        sublayersFace.Add(layer);
+                        layers.Add(layer);
                         child.name = $"layer: {i}";
 
                     }
                 }
             }
-            layers.Add(sublayersBody);
-            if(sublayersFace.Count != 0) layers.Add(sublayersFace);
-
-
         }
 
 
-        public void SetSprite(Sprite sprite, int layer = 0, int sublayer = 0)
+        public void SetSprite(Sprite sprite, int layer = 0)
         {
-            layers[layer][sublayer].SetSprite(sprite);
+            layers[layer].SetSprite(sprite);
         }
         public Sprite GetSprite(string SpriteName)
         {
@@ -114,9 +109,9 @@ namespace CHARACTERS
             }
         }
 
-        public Coroutine TransitionSprite(Sprite sprite, int layer = 1, int sublayer = 0, float speed = 1)
+        public Coroutine TransitionSprite(Sprite sprite, int layer = 1, float speed = 1)
         {
-            CharacterSpriteLayer spriteLayer = layers[layer][sublayer];
+            CharacterSpriteLayer spriteLayer = layers[layer];
             return spriteLayer.TransitionSprite(sprite, speed);
         }
         public override IEnumerator ShowingOrHiding(bool show)
@@ -143,27 +138,25 @@ namespace CHARACTERS
             
             base.SetColor(color);
             color = DisplayColor;
-            foreach (var list in layers)
+            foreach (var layer in layers)
             {
-                foreach (var layer in list)
-                {
+                
                     layer.StopChangingColor();
                     layer.SetColor(color);
-                }
+                
             }
         }
 
         public override IEnumerator ChangingColor(Color color, float speed, int idx = 0)
         {
-            foreach(var list in layers)
+            foreach(var layer in layers)
             {
-                foreach(var layer in list)
-                {
+                
                     layer.TransitionColor(color, speed);
-                }
+                
             }
             yield return null;
-            while(layers[idx].Any(l => l.is_coloring))
+            while(layers.Any(l => l.is_coloring))
             {
                 yield return null;
             }
@@ -174,16 +167,15 @@ namespace CHARACTERS
         {
             
             Color targetColor = DisplayColor;
-            foreach (var list in layers)
+            foreach (var layer in layers)
             {
-                foreach (var layer in list)
-                {
+                
                     if (!immediate) layer.TransitionColor(targetColor, speedMultiplier);
                     else layer.SetColor(DisplayColor);
-                }
+                
                 yield return null;
             }
-            while (layers[idx].Any(l => l.is_coloring))
+            while (layers.Any(l => l.is_coloring))
             {
                 yield return null;
             }
@@ -191,17 +183,16 @@ namespace CHARACTERS
         }
         public override IEnumerator FaceDirection(bool faceleft, float speedMultiplier, bool immediate, int idx = 0)
         {
-            foreach(var list in layers)
+            foreach(var layer in layers)
             {
-                foreach (var layer in list)
-                {
+                
                     if (faceleft)
                         layer.FaceLeft(speedMultiplier, immediate);
                     else layer.FaceRight(speedMultiplier, immediate);
-                }
+                
             }
             yield return null;
-            while (layers[idx].Any(l => l.is_flipping))
+            while (layers.Any(l => l.is_flipping))
             {
                 yield return null;
             }
@@ -229,19 +220,18 @@ namespace CHARACTERS
                 {
                     byte val = (byte)r.Next(122, 255);
                     var targetfloat = r.Next((int)HoloColor.b, 220);
-                    foreach (var list in layers)
+                    foreach (var layer in layers)
                     {
-                        foreach (var layer in list)
-                        {
+                        
 
                             layer.SetColor(Hologramming(HoloColor, HoloColor.r, HoloColor.b, targetfloat, val));
 
-                        }
+                        
 
                         yield return null;
                     }
 
-                    while (layers[idx].Any(l => l.is_coloring))
+                    while (layers.Any(l => l.is_coloring))
                     {
                         yield return null;
                     }
@@ -260,19 +250,18 @@ namespace CHARACTERS
         {
             if (is_hologram)
             {
-                foreach (var list in layers)
+                foreach (var layer in layers)
                 {
-                    foreach (var layer in list)
-                    {
+                   
 
                         layer.TransitionColor(Color.white, 1);
 
-                    }
+                    
 
                     yield return null;
                 }
 
-                while (layers[idx].Any(l => l.is_coloring))
+                while (layers.Any(l => l.is_coloring))
                 {
                     yield return null;
                 }

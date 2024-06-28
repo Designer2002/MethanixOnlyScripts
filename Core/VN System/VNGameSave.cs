@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace VISUALNOVEL
@@ -13,15 +14,14 @@ namespace VISUALNOVEL
         public const string FILE_TYPE = ".amogus";
         public const string SCREENSHOT_FILE_TYPE = ".jpg";
         private const float DOWNSCALE = 1;
-        public const bool encryptFiles = true;
+        public const bool encryptFiles = false;
         public bool newGame = true;
         public VN_VaribleData[] variables;
-
         public SavingsData activeState;
         public static bool reload = false;
         public string timestamp;
 
-        private const string BACK_PANEL = "background";
+        private const string BACK_PANEL = "backgroundPanel";
         private const string BASE_LOCATION_CODEWORD = "base";
 
 
@@ -54,16 +54,16 @@ namespace VISUALNOVEL
 
         public void Activate()
         {
-            
-            
+
+            SetConversationData(true);
             CheckAndUpdateConversationData();
             if (activeState != null) activeState.Load();
-            GRAPHICS.GraphicPanelManager.instance.StartCoroutine(TryFixGraphics());
             DIALOGUE.DialogueSystem.instance.architect.Clear();
             DIALOGUE.DialogueSystem.instance.conversationManager.architect.tmpro.ForceMeshUpdate();
 
             SetVariableData();
-            SetConversationData();
+            SetConversationData(false);
+            VNMenuManager.instance.StartCoroutine(TryFixGraphics());
 
             DIALOGUE.DialogueSystem.instance.DialogueContinuationPrompt.Hide();
 
@@ -82,6 +82,7 @@ namespace VISUALNOVEL
 
                 if (conversation.file != string.Empty)
                 {
+                    Debug.Log("a");
                     var compressedData = new VNConversationDataCompressed();
                     compressedData.fileName = conversation.file;
                     //compressedData.progress = LOCATIONS.LocationManager.instance.goal != null ? LOCATIONS.LocationManager.instance.RollBackProgress : conversation.GetProgress();
@@ -92,6 +93,7 @@ namespace VISUALNOVEL
                 }
                 else
                 {
+                    Debug.Log("b");
                     var fullData = new VNConversationData();
                     fullData.conversation = conversation.GetLines();
                     //fullData.progress = LOCATIONS.LocationManager.instance.goal != null ? LOCATIONS.LocationManager.instance.RollBackProgress : conversation.GetProgress();
@@ -103,9 +105,8 @@ namespace VISUALNOVEL
             return returnData.ToArray();
         }
 
-        public void SetConversationData()
+        public void SetConversationData(bool skip = true)
         {
-
             for (int i = 0; i < activeConversations.Length; i++)
             {
                 try
@@ -143,13 +144,14 @@ namespace VISUALNOVEL
 
                     if (conversation != null && conversation.GetLines().Count > 0)
                     {
-                        if (i == 0)
+                        if (i == 0 && !skip)
                         {
                             DIALOGUE.DialogueSystem.instance.architect.Clear();
                             DIALOGUE.DialogueSystem.instance.conversationManager.StartConverstaion(conversation);
                         }
                         else
                         {
+                            DIALOGUE.DialogueSystem.instance.architect.Clear();
                             DIALOGUE.DialogueSystem.instance.conversationManager.Enqueue(conversation);
                         }
                     }
@@ -186,38 +188,26 @@ namespace VISUALNOVEL
                 }
             }
 
-            if(returnData.Count != 0)
+            if (returnData.Count != 0)
             {
-                if (!returnData.Where(i => i.name == BACK_PANEL).Any())
-                {
-                    if (VariableStore.TryGetValue(BACK_PANEL, out var back))
-                    {
-                        returnData.Add(new VN_VaribleData()
-                        {
-                            name = BACK_PANEL,
-                            value = back.ToString(),
-                            type = "System.String"
-                        });
-                    }
-                }
-                if (!returnData.Where(i => i.name == "location").Any())
-                {
-                    if (VariableStore.TryGetValue("location", out var l))
-                    {
-                        returnData.Add(new VN_VaribleData()
-                        {
-                            name = "location",
-                            value = l.ToString(),
-                            type = "System.String"
-                        });
-                    }
-                }
+                VariableStore.TryGetValue("location", out object location);
+                if (!returnData.Where(i => i.name == "backgroundPanel").Any())
+                    returnData.Add( new VN_VaribleData() { name = "Default.backgroundPanel", type = "System.String", value = location.ToString() } );
+                else if (returnData.Where(i => i.name == "backgroundPanel").First().value == string.Empty)
+                    returnData.Where(i => i.name == "backgroundPanel").First().value = location.ToString();
             }
             return returnData.ToArray();
         }
-
+        private void FilterVariableData()
+        {
+            variables = variables
+            .GroupBy(x => x.name)
+            .Select(group => group.First())
+            .ToArray();
+        }
         public void SetVariableData()
         {
+            FilterVariableData();
             foreach (var variable in variables)
             {
                 string val = variable.value;
@@ -226,7 +216,7 @@ namespace VISUALNOVEL
                     case "System.Boolean":
                         if (bool.TryParse(val, out bool b_v))
                         {
-                            VariableStore.TrySetValue(variable.name, b_v);
+                            VariableStore.TrySetValue(variable.name, b_v, create: true);
                             continue;
                         }
                         break;
@@ -240,70 +230,118 @@ namespace VISUALNOVEL
                     case "System.Single":
                         if (float.TryParse(val, out float f_v))
                         {
-                            VariableStore.TrySetValue(variable.name, f_v);
+                            VariableStore.TrySetValue(variable.name, f_v, create: true);
                             continue;
                         }
                         break;
                     case "System.String":
                         if (variable.name.Contains("location") && val == BASE_LOCATION_CODEWORD) continue;
-                       // if (variable.name == "backgroundPanel" && val == string.Empty) continue;
-                        VariableStore.TrySetValue(variable.name, val, change:false);
+                        // if (variable.name == "backgroundPanel" && val == string.Empty) continue;
+                        VariableStore.TrySetValue(variable.name, val, change: false);
                         continue;
                 }
-                
+
                 Debug.LogError($"couldn't not interpret variable type {variable.name} = {variable.type}");
             }
+            
+
             VariableStore.TryGetValue("location", out object location);
+            Debug.Log(location);
+            
             VNMenuManager.instance.StartCoroutine(LOCATIONS.LocationManager.instance.Teleport(location.ToString(), immediate: true, is_teleporting_by_button: false));
+            
+        }
+
+        public void ReadQuickSeekForVariables(int progress, int order)
+        {
+            Dictionary<string, string> variables = new Dictionary<string, string>();
+
+            var conversation = DIALOGUE.DialogueSystem.instance.conversationManager.GetConversationQueue()[order];
+
+            List<string> part = new List<string>();
+            for(int i = 0; i <= progress; i++)
+            {
+                part.Add(conversation.GetLines()[i]);
+            }
+                string pattern = @"\$(\w+) = (""[^""]*""|\d+|true|false)";
+                foreach (var line in part)
+                {
+                    Match match = Regex.Match(line, pattern);
+                    if (match.Success)
+                    {
+                        string varName = match.Groups[1].Value;
+                        string varValue = match.Groups[2].Value.Trim('"');
+                        variables[varName] = varValue;
+                    Debug.Log($"{ varName}, {varValue}");
+                    }
+                }
+            
+            foreach(var vari in variables)
+            {
+                VariableStore.TrySetValue(vari.Key, vari.Value, create: true);
+            }
         }
 
         public void CheckAndUpdateConversationData()
         {
-            if (reload)
-            {
-                List<string> returnData = new List<string>();
-                var conversations = DIALOGUE.DialogueSystem.instance.conversationManager.GetConversationQueue();
-                for (int i = 0; i < conversations.Length; i++)
+            
+                if (reload)
                 {
-                    var savedData = JsonUtility.FromJson<VNConversationData>(activeConversations[i]);
-                    var conversation = conversations[i];
-                    string data = "";
+                    List<string> returnData = new List<string>();
+                    int c_progress = 0;
+                    var conversations = DIALOGUE.DialogueSystem.instance.conversationManager.GetConversationQueue();
 
-                    if (conversation.file != string.Empty)
+                    
+
+                    for (int i = 0; i < conversations.Length; i++)
                     {
-                        var compressedData = new VNConversationDataCompressed();
-                        compressedData.fileName = conversation.file;
-                        compressedData.progress = savedData.progress;
-                        compressedData.startIndex = conversation.fileStartIndex;
-                        compressedData.endIndex = conversation.fileEndIndex;
-                        data = JsonUtility.ToJson(compressedData);
+                        var savedData = JsonUtility.FromJson<VNConversationData>(activeConversations[i]);
+                        var conversation = conversations[i];
+                        string data = "";
+
+                        if (conversation.file != string.Empty)
+                        {
+                            var compressedData = new VNConversationDataCompressed();
+                            compressedData.fileName = conversation.file;
+                            compressedData.progress = savedData.progress;
+                            compressedData.startIndex = conversation.fileStartIndex;
+                            compressedData.endIndex = conversation.fileEndIndex;
+                            data = JsonUtility.ToJson(compressedData);
+                            c_progress = compressedData.progress;
+                        }
+                        else
+                        {
+                            var fullData = new VNConversationData();
+                            fullData.conversation = conversation.GetLines();
+                            fullData.progress = savedData.progress;
+                            data = JsonUtility.ToJson(fullData);
+                            c_progress = fullData.progress;
+                        }
+                        returnData.Add(data);
+                        Debug.Log(c_progress);
+                        ReadQuickSeekForVariables(c_progress, i);
                     }
-                    else
-                    {
-                        var fullData = new VNConversationData();
-                        fullData.conversation = conversation.GetLines();
-                        fullData.progress = savedData.progress;
-                        data = JsonUtility.ToJson(fullData);
-                    }
-                    returnData.Add(data);
+
+                    if (returnData.Count != 0) activeConversations = returnData.ToArray();
+
+                    variables = GetVariableData();
+
+                    string saveJSON = JsonUtility.ToJson(this);
+                    FileManager.Save(filePath, saveJSON, encryptFiles);
+                    reload = false; // Сброс флага перезагрузки после сохранения
                 }
-                if(returnData.Count != 0) activeConversations = returnData.ToArray();
-                variables = GetVariableData();
-                string saveJSON = JsonUtility.ToJson(this);
-                FileManager.Save(filePath, saveJSON, encryptFiles);
-                reload = false; // Reset the reload flag after saving
-
 
                 
-            }
-
+            
+            
         }
 
         public IEnumerator TryFixGraphics()
         {
             VariableStore.TryGetValue("backgroundPanel", out var g);
             string graphicname = g.ToString();
-            var panel = GRAPHICS.GraphicPanelManager.instance.GetPanel(BACK_PANEL);
+            Debug.Log(graphicname);
+            var panel = GRAPHICS.GraphicPanelManager.instance.GetPanel("background");
             if (graphicname != panel.layers[panel.layers.Count - 1].currentGraphic.graphicName)
             {
                 UnityEngine.Object graphic = null;
@@ -316,12 +354,12 @@ namespace VISUALNOVEL
                 }
                 if (graphic == null)
                 {
-                    Debug.LogWarning("NULL GRAPHIC");
+                    //Debug.LogWarning("NULL GRAPHIC");
                     yield break;
                 }
                 GRAPHICS.GraphicLayer gl = panel.GetLayer(panel.layers.Count - 1);
                 if (graphic is Texture) yield return gl.SetTexture(graphic as Texture, path: pathToGaphic, immediate: true);
-                if (graphic is UnityEngine.Video.VideoClip) yield return gl.SetVideo(graphic as UnityEngine.Video.VideoClip, path: pathToGaphic,immediate: true);
+                if (graphic is UnityEngine.Video.VideoClip) yield return gl.SetVideo(graphic as UnityEngine.Video.VideoClip, path: pathToGaphic, immediate: true);
 
             }
             else

@@ -141,17 +141,24 @@ public class TextArchitect
             }
             tmpro.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
             bool lastCharacterInvisible = !textInfo.characterInfo[maxRange - 1].isVisible;
-            if(alphas[maxRange-1] > alphaThreshold || lastCharacterInvisible)
+            try
             {
-                if (maxRange < textInfo.characterCount)
+                if (alphas[maxRange - 1] > alphaThreshold || lastCharacterInvisible)
                 {
-                    maxRange++;
+                    if (maxRange < textInfo.characterCount)
+                    {
+                        maxRange++;
+                    }
+                    else if (alphas[maxRange - 1] >= 255 || lastCharacterInvisible)
+                    {
+                        DIALOGUE.ConversationManager.userPrompt = true;
+                        break;
+                    }
                 }
-                else if (alphas[maxRange-1] >= 255 || lastCharacterInvisible)
-                {
-                    DIALOGUE.ConversationManager.userPrompt = true;
-                    break;
-                }
+            }
+            catch
+            {
+                Clear();
             }
             yield return new WaitForEndOfFrame();
         }

@@ -132,7 +132,7 @@ namespace COMMANDS
                 return;
             }
             List<string> lines = FileManager.ReadTextAsset(file, includeBlankLines: true);
-            Conversation newconv = new Conversation(lines);
+            Conversation newconv = new Conversation(lines, file: path);
             if (enqueue) DialogueSystem.instance.conversationManager.Enqueue(newconv);
             else DialogueSystem.instance.conversationManager.StartConverstaion(newconv);
 

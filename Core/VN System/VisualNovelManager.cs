@@ -40,7 +40,7 @@ namespace VISUALNOVEL
             if (VNGameSave.activeFile.newGame)
             {
                 List<string> lines = FileManager.ReadTextAsset(config.startingFile);
-                DIALOGUE.Conversation conversation = new DIALOGUE.Conversation(lines);
+                DIALOGUE.Conversation conversation = new DIALOGUE.Conversation(lines, file: $"{FilePaths.dialogue_path}{config.startingFile.name}");;
                 DIALOGUE.DialogueSystem.instance.Say(conversation);
             }
             else

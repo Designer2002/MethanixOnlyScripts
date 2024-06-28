@@ -121,6 +121,7 @@ namespace DIALOGUE
         {
             autoButton.enabled = false;
             skipButton.enabled = false;
+            LOCATIONS.LocationExpander.instance.Expander.interactable = true;
             Disable();
         }
 
